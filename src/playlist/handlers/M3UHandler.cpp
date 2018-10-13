@@ -70,9 +70,22 @@ void M3UHandler::processList()
         } else if (_m3uLineList[i].contains("#EXTINF")) {
             tmp = _m3uLineList[i];
             tmp.replace(QString("#EXTINF:"), QString(""));
-            tmpList = tmp.split(",");
 
-            _channel = new Channel(tmpList[1], tmpList[0].toInt());
+            tmpList = tmp.split(",");
+            QString chName = tmpList[1];
+            tmpList = tmpList[0].split(" ");
+            int chNom = tmpList[0].toInt();
+
+            _channel = new Channel(chName, chNom);
+            if (tmpList.size() > 1) {
+            	tmp = tmpList[1];
+            	if (tmp.startsWith("tvg-id=")) {
+            		tmpList = tmp.split("=");
+            		if (tmpList.size() == 2) {
+            			_channel->setXmltvId(tmpList[1]);
+            		}
+            	}
+            }
             _channels << _channel;
         } else if (_m3uLineList[i].contains("#EXTTV")) {
             tmp = _m3uLineList[i];
